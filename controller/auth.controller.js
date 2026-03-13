@@ -4,6 +4,12 @@ const authSignup = async (req, res) => {
     try {
         const { name, email, password } = req.body;
         
+        if (name ==="" || email ==="" || password ==="") {
+            return res.status(400).json({ 
+                success: false, 
+                message: "All fields are required" 
+            });
+        }
         // Check if user already exists
         const existingUser = await User.findOne({ email });
         if (existingUser) {
@@ -61,4 +67,51 @@ const authSignup = async (req, res) => {
     }
 };
 
-export default authSignup;
+const authLogin = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        if (email ==="" || password ==="") {
+            return res.status(400).json({ 
+                success: false, 
+                message: "All fields are required" 
+            });
+        }
+        // Check if user exists
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(400).json({ 
+                success: false, 
+                message: "User not found with this email" 
+            });
+        }
+        
+        // Check if password matches
+        if (user.password !== password) {
+            return res.status(400).json({ 
+                success: false, 
+                message: "Invalid password" 
+            });
+        }
+        
+        // Return success response (excluding password)
+        return res.status(200).json({
+            success: true,
+            message: "User logged in successfully",
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email
+            }
+        });
+        
+    } catch (error) {
+        console.error("Login error:", error);
+        
+        return res.status(500).json({
+            success: false,
+            message: "Internal server error"
+        });
+    }
+};
+
+export default {authSignup, authLogin};

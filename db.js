@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const connectDb = () => {
 
-mongoose.connect("mongodb+srv://shubhamaug888:OfldjtGw0GxidrJK@cluster0.mcdco.mongodb.net/")
+mongoose.connect("mongodb+srv://shubhamaug888:OfldjtGw0GxidrJK@cluster0.mcdco.mongodb.net/authentication-app")
 .then(() => {
     console.log("MongoDB Connected");
 })
