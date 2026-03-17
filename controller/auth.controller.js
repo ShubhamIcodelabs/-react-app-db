@@ -1,4 +1,23 @@
 import User from "../models/user.model.js";
+import jwt from "jsonwebtoken";
+
+const generateAccessToken = (user) => {
+  return jwt.sign(
+    { id: user._id, email: user.email },
+    "mysecretkey",
+    { expiresIn: "1h" } // short expiry
+  );
+};
+
+// Generate Refresh Token (long life)
+const generateRefreshToken = (user) => {
+  return jwt.sign(
+    { id: user._id },
+    "refreshtokenkey",
+    { expiresIn: "7d" } // long expiry
+  );
+};
+
 
 const authSignup = async (req, res) => {
     try {
@@ -84,6 +103,9 @@ const authLogin = async (req, res) => {
                 message: "User not found with this email" 
             });
         }
+
+        const accessToken = generateAccessToken(user);
+        const refreshToken = generateRefreshToken(user);
         
         // Check if password matches
         if (user.password !== password) {
@@ -97,6 +119,8 @@ const authLogin = async (req, res) => {
         return res.status(200).json({
             success: true,
             message: "User logged in successfully",
+            accessToken: accessToken,
+            refreshToken: refreshToken,
             user: {
                 id: user._id,
                 name: user.name,
@@ -114,4 +138,4 @@ const authLogin = async (req, res) => {
     }
 };
 
-export default {authSignup, authLogin};
+export  {authSignup, authLogin};
