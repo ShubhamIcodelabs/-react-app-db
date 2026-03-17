@@ -3,19 +3,32 @@ import mongoose from "mongoose";
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true
+    required: true,
+    trim: true
   },
   email: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
+    lowercase: true,
+    trim: true
   },
   password: {
     type: String,
-    required: true
+    required: true,
+    minlength: 6
   },
-  //timestamps: true
+  refreshToken: {
+    type: String,
+    default: null
+  }
+}, {
+  timestamps: true
 });
+
+// Index for better query performance
+userSchema.index({ email: 1 });
+userSchema.index({ refreshToken: 1 });
 
 const User = mongoose.model("User", userSchema);
 
